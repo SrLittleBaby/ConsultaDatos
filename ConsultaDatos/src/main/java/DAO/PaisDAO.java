@@ -20,7 +20,9 @@ public class PaisDAO implements PaisCRUD {
     @Override
     public List<Pais> obtenerTodosPaises() throws SQLException {
         List<Pais> paises = new ArrayList<>();
-        String sql = "SELECT * FROM paises";
+        String sql = "SELECT p.*, " +
+                     "(SELECT c.nombre FROM ciudades c WHERE c.id_pais = p.id_pais AND c.es_capital = TRUE LIMIT 1) as capital_registrada " +
+                     "FROM paises p";
         
         try (Connection conn = Conn.getConnection();
              Statement stmt = conn.createStatement();
@@ -28,7 +30,9 @@ public class PaisDAO implements PaisCRUD {
             
             while (rs.next()) {
                 Pais pais = mapearPais(rs);
-                paises.add(pais);
+                if (pais != null) {
+                    paises.add(pais);
+                }
             }
         }
         return paises;
@@ -50,7 +54,6 @@ public class PaisDAO implements PaisCRUD {
         }
         return null;
     }
-    
     
     @Override
     public Pais obtenerPaisPorCodigo(String codPais) throws SQLException {
@@ -89,6 +92,7 @@ public class PaisDAO implements PaisCRUD {
         }
         return -1;
     }
+
     @Override
     public boolean actualizarPais(Pais pais) throws SQLException {
         String sql = "UPDATE paises SET nombre=?, continente=?, region=?, superficie=?, " +
@@ -98,12 +102,13 @@ public class PaisDAO implements PaisCRUD {
         try (Connection conn = Conn.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            establecerParametrosPais(pstmt, pais);
-            pstmt.setInt(13, pais.getIdPais());
+            establecerParametrosPais(pstmt, pais); 
+            pstmt.setInt(12, pais.getIdPais());    
             
             return pstmt.executeUpdate() > 0;
         }
     }
+
     @Override
     public boolean eliminarPais(int idPais) throws SQLException {
         String sql = "DELETE FROM paises WHERE id_pais = ?";
@@ -115,22 +120,74 @@ public class PaisDAO implements PaisCRUD {
             return pstmt.executeUpdate() > 0;
         }
     }
+
+    public List<Pais> obtenerPaisesPorContinente(String continente) throws SQLException {
+        List<Pais> paises = new ArrayList<>();
+        String sql = "SELECT * FROM paises WHERE continente LIKE ?";
+        
+        try (Connection conn = Conn.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, "%" + continente + "%");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Pais pais = mapearPais(rs);
+                    if (pais != null) paises.add(pais);
+                }
+            }
+        }
+        return paises;
+    }
+
+    public List<Pais> obtenerReporteCapitales() throws SQLException {
+        List<Pais> paises = new ArrayList<>();
+        String sql = "SELECT p.*, " +
+                     "(SELECT c.nombre FROM ciudades c WHERE c.id_pais = p.id_pais AND c.es_capital = TRUE LIMIT 1) as capital_registrada " +
+                     "FROM paises p ORDER BY p.continente, p.nombre"; 
+        
+        try (Connection conn = Conn.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Pais pais = mapearPais(rs);
+                if (pais != null) paises.add(pais);
+            }
+        }
+        return paises;
+    }
     
     private Pais mapearPais(ResultSet rs) throws SQLException {
-        return new Pais(
-            rs.getInt("id_pais"),
-            rs.getString("nombre"),
-            rs.getString("continente"),
-            rs.getString("region"),
-            rs.getFloat("superficie"),
-            rs.getInt("anioIndependencia"),
-            rs.getInt("poblacion"),
-            rs.getFloat("expectLife"),
-            rs.getFloat("pib"),
-            rs.getString("gobierno"),
-            rs.getString("jefeGobierno"),
-            rs.getString("codPais")
-        );
+        try {
+            Pais p = new Pais(
+                rs.getInt("id_pais"),
+                rs.getString("nombre"),
+                rs.getString("continente"),
+                rs.getString("region"),
+                rs.getFloat("superficie"),
+                rs.getInt("anioIndependencia"),
+                rs.getInt("poblacion"),
+                rs.getFloat("expectLife"),
+                rs.getFloat("pib"),
+                rs.getString("gobierno"),
+                rs.getString("jefeGobierno"),
+                rs.getString("codPais"),
+                null, 
+                null 
+            );
+            
+            try {
+                String cap = rs.getString("capital_registrada");
+                p.setCapitalNombre(cap);
+            } catch (SQLException e) {
+                p.setCapitalNombre("No Consultada");
+            }
+            
+            return p;
+            
+        } catch (Exception e) {
+            throw new SQLException("Error de validación al leer país: " + e.getMessage());
+        }
     }
     
     private void establecerParametrosPais(PreparedStatement pstmt, Pais pais) throws SQLException {
@@ -144,6 +201,6 @@ public class PaisDAO implements PaisCRUD {
         pstmt.setFloat(8, pais.getPib());
         pstmt.setString(9, pais.getGobierno());
         pstmt.setString(10, pais.getJefeGobierno());
-        pstmt.setString(12, pais.getCodPais());
+        pstmt.setString(11, pais.getCodPais()); 
     }
 }

@@ -18,17 +18,17 @@ public class Usuario {
     public Usuario() {
     }
     
-    public Usuario(int idUsuario, String nombre, String contrasena, String rol) {
+    public Usuario(int idUsuario, String nombre, String contrasena, String rol) throws Exception {
         this.idUsuario = idUsuario;
-        this.nombre = nombre;
-        this.contrasena = contrasena;
-        this.rol = rol;
+        this.setNombre(nombre);
+        this.setContrasena(contrasena);
+        this.setRol(rol);
     }
     
-    public Usuario(String nombre, String contrasena, String rol) {
-        this.nombre = nombre;
-        this.contrasena = contrasena;
-        this.rol = rol;
+    public Usuario(String nombre, String contrasena, String rol) throws Exception {
+        this.setNombre(nombre);
+        this.setContrasena(contrasena);
+        this.setRol(rol);
     }
     
     public int getIdUsuario() {
@@ -43,7 +43,16 @@ public class Usuario {
         return nombre;
     }
     
-    public void setNombre(String nombre) {
+    public void setNombre(String nombre) throws Exception {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new Exception("El nombre de usuario es obligatorio");
+        }
+        if (nombre.length() < 3) {
+            throw new Exception("El nombre debe tener al menos 3 caracteres");
+        }
+        if (nombre.length() > 150) {
+            throw new Exception("El nombre no puede tener mas de 150 caracteres");
+        }
         this.nombre = nombre;
     }
     
@@ -51,7 +60,16 @@ public class Usuario {
         return contrasena;
     }
     
-    public void setContrasena(String contrasena) {
+    public void setContrasena(String contrasena) throws Exception {
+        if (contrasena == null || contrasena.trim().isEmpty()) {
+            throw new Exception("La contraseña es obligatoria");
+        }
+        if (contrasena.length() < 3) {
+            throw new Exception("La contraseña debe tener al menos 3 caracteres");
+        }
+        if (contrasena.length() > 20) {
+            throw new Exception("La contraseña no puede tener mas de 20 caracteres");
+        }
         this.contrasena = contrasena;
     }
     
@@ -59,7 +77,14 @@ public class Usuario {
         return rol;
     }
     
-    public void setRol(String rol) {
+    public void setRol(String rol) throws Exception {
+        if (rol == null || rol.trim().isEmpty()) {
+            throw new Exception("El rol es obligatorio");
+        }
+        if (rol.length() > 20) {
+            throw new Exception("El rol no puede tener mas de"
+                    + " 20 caracteres");
+        }
         this.rol = rol;
     }
 }

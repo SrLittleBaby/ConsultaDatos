@@ -176,7 +176,6 @@ public class VistaMenu extends javax.swing.JFrame {
         
         VistaCiudad vistaCiudad = new VistaCiudad(listaPaises, Conn.getConnection());
         vistaCiudad.setVisible(true);
-        this.dispose();
         
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Error al cargar países: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -190,7 +189,6 @@ public class VistaMenu extends javax.swing.JFrame {
         
         VistaIdioma vistaIdioma = new VistaIdioma(listaPaises, Conn.getConnection());
         vistaIdioma.setVisible(true);
-        this.dispose();
         
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Error al cargar países: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

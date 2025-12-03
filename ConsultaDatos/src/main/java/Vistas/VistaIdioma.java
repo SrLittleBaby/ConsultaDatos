@@ -347,6 +347,11 @@ public class VistaIdioma extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un pais", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        if (paisSeleccionado.getIdPais() == -1) {
+            JOptionPane.showMessageDialog(this, "No puede agregar registros en Global", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         if (txtIdioma.getText().isEmpty() || txtPorcentaje.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe rellenar los campos de idioma y porcentaje", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
@@ -369,14 +374,15 @@ public class VistaIdioma extends javax.swing.JFrame {
                 txtPorcentaje.setText("");
                 RbOficial.setSelected(false);
 
-                JOptionPane.showMessageDialog(this, "Idioma '" + nombreIdioma + "' agregado a " + paisSeleccionado.getNombre() + ".", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Idioma '" + nombreIdioma + "' agregado a " + paisSeleccionado.getNombre() + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El porcentaje debe ser un número válido", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al guardar idioma: " + e.getMessage(), 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al guardar idioma: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_BtnnAgregarActionPerformed
 
@@ -411,8 +417,9 @@ public class VistaIdioma extends javax.swing.JFrame {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El porcentaje debe ser un número válido", "Error de Formato", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al actualizar idioma: " + e.getMessage(), 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al actualizar idioma: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_BtnnEditarActionPerformed
 
@@ -431,7 +438,11 @@ public class VistaIdioma extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdiomaKeyTyped
 
     private void txtPorcentajeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPorcentajeKeyTyped
-        if(txtPorcentaje.getText().length() > 2 || !Character.isDigit(evt.getKeyChar())){
+        char tecla = evt.getKeyChar();
+        if (!Character.isDigit(tecla) && tecla != '.' && tecla != '\b') {
+            evt.consume();
+        }
+        if (txtPorcentaje.getText().length() > 5) {
             evt.consume();
         }
     }//GEN-LAST:event_txtPorcentajeKeyTyped

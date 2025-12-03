@@ -427,16 +427,26 @@ public class VistaPais extends javax.swing.JFrame {
             
             int poblacion = Integer.parseInt(poblacionStr);
             
-            Pais nuevoPais = new Pais(nombre, continente, "", 0.0f, 0, poblacion, 
-                                    0.0f, 0.0f, "", "", codigo);
+            Pais nuevoPais = new Pais(
+                nombre, 
+                continente, 
+                "N/A",
+                0.0f, 
+                0, 
+                poblacion, 
+                0.0f, 
+                0.0f, 
+                "N/A",
+                "N/A",
+                codigo
+                );
             
             
-            // Insertar en la base de datos
             int idGenerado = paisDAO.insertarPais(nuevoPais);
             
             if (idGenerado > 0) {
                 JOptionPane.showMessageDialog(this, "País " + nombre + " agregado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                cargarDatosDesdeBD(); // Recargar datos desde BD
+                cargarDatosDesdeBD();
                 limpiarCampos();
             } else {
                 JOptionPane.showMessageDialog(this, "Error al agregar el país", "Error", JOptionPane.ERROR_MESSAGE);

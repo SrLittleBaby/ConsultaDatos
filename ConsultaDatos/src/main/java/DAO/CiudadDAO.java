@@ -23,7 +23,7 @@ public class CiudadDAO implements CiudadCRUD{
     
     @Override
     public void insertar(Ciudad ciudad) {
-        String sql = "INSERT INTO ciudades (id_pais, nombre, distrito, poblacion, esCapital) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ciudades (id_pais, nombre, distrito, poblacion, es_capital) VALUES (?, ?, ?, ?, ?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, ciudad.getIdPais());
@@ -40,7 +40,7 @@ public class CiudadDAO implements CiudadCRUD{
             }
             
         } catch (SQLException e) {
-            throw new RuntimeException("Error al insertar ciudad", e);
+            throw new RuntimeException("Error al insertar ciudad: " + e.getMessage(), e);
         }
     }
     
@@ -252,13 +252,17 @@ public class CiudadDAO implements CiudadCRUD{
     }
     
     private Ciudad mapearCiudad(ResultSet rs) throws SQLException {
-        Ciudad ciudad = new Ciudad();
-        ciudad.setIdCiudad(rs.getInt("id_ciudad"));
-        ciudad.setIdPais(rs.getInt("id_pais"));
-        ciudad.setNombre(rs.getString("nombre"));
-        ciudad.setDistrito(rs.getString("distrito"));
-        ciudad.setPoblacion(rs.getInt("poblacion"));
-        ciudad.setEsCapital(rs.getBoolean("es_capital"));
-        return ciudad;
+        try {
+            Ciudad ciudad = new Ciudad();
+            ciudad.setIdCiudad(rs.getInt("id_ciudad"));
+            ciudad.setIdPais(rs.getInt("id_pais"));
+            ciudad.setNombre(rs.getString("nombre"));
+            ciudad.setDistrito(rs.getString("distrito"));
+            ciudad.setPoblacion(rs.getInt("poblacion"));
+            ciudad.setEsCapital(rs.getBoolean("es_capital"));
+            return ciudad;
+        } catch (Exception e) {
+            throw new SQLException("Error al leer datos de la ciudad desde la BD: " + e.getMessage());
+        }
     }
 }

@@ -319,6 +319,10 @@ public class VistaCiudad extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un pais", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (paisSeleccionado.getIdPais() == -1) {
+            JOptionPane.showMessageDialog(this, "No puede agregar registros en Global", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (txtNombre.getText().isEmpty() || txtDistrito.getText().isEmpty() || txtPoblacion.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Complete todos los campos de la ciudad", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
             return;
