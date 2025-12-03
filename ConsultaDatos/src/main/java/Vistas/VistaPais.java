@@ -34,7 +34,6 @@ public class VistaPais extends javax.swing.JFrame {
         tabla.setRowCount(0);
         setLocationRelativeTo(null);
         
-        // Inicializar DAO
         try {
             this.paisDAO = new PaisDAO();
         } catch (Exception e) {
@@ -386,18 +385,20 @@ public class VistaPais extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCodigoActionPerformed
 
     private void bttnCompararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnCompararActionPerformed
-        int fila = jTable1.getSelectedRow();
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un pais de la tabla", "Aviso", JOptionPane.WARNING_MESSAGE);
+        int[] filasSeleccionadas = jTable1.getSelectedRows();
+        if (filasSeleccionadas.length != 2) {
+            JOptionPane.showMessageDialog(this,"selecciona 2 países de la tabla","Selección Incorrecta",JOptionPane.WARNING_MESSAGE);
             return;
         }
+        int indiceModelo1 = jTable1.convertRowIndexToModel(filasSeleccionadas[0]);
+        int indiceModelo2 = jTable1.convertRowIndexToModel(filasSeleccionadas[1]);
         
-        Pais paisSeleccionado = obtenerPaisPorFila(fila);
-        if (paisSeleccionado != null) {
-            txtCodigo.setText(paisSeleccionado.getCodPais());
-            txtNombre.setText(paisSeleccionado.getNombre());
-            txtContinente.setText(paisSeleccionado.getContinente());
-            txtPoblacion.setText(String.valueOf(paisSeleccionado.getPoblacion()));
+        Pais p1 = paises.get(indiceModelo1);
+        Pais p2 = paises.get(indiceModelo2);
+        
+        if (p1 != null && p2 != null) {
+            VistaComparar ventanaComparar = new VistaComparar(p1, p2);
+            ventanaComparar.setVisible(true);
         }
     }//GEN-LAST:event_bttnCompararActionPerformed
 

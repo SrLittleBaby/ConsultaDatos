@@ -39,27 +39,56 @@ public class VistaCiudad extends javax.swing.JFrame {
     
     private void cargarPaisesEnComboBox() {
         DefaultComboBoxModel<Pais> modelo = new DefaultComboBoxModel<>();
-        for (Pais p : this.listaPaisesRecibida) {
-            modelo.addElement(p);
+        
+        try {
+            Pais opcionGlobal = new Pais();
+            opcionGlobal.setIdPais(-1);
+            opcionGlobal.setNombre("GLOBAL (Ver todas)"); 
+            opcionGlobal.setContinente("N/A"); opcionGlobal.setRegion("N/A"); 
+            opcionGlobal.setSuperficie(0); opcionGlobal.setAnioIndependencia(0);
+            opcionGlobal.setPoblacion(0); opcionGlobal.setExpectLife(0); 
+            opcionGlobal.setPib(0); opcionGlobal.setGobierno("N/A"); 
+            opcionGlobal.setJefeGobierno("N/A"); opcionGlobal.setCapitalNombre("N/A");
+            opcionGlobal.setCodPais("GLB");
+            
+            modelo.addElement(opcionGlobal);
+
+            for (Pais p : this.listaPaisesRecibida) {
+                modelo.addElement(p);
+            }
+            
+            jbPaises.setModel(modelo);
+            
+        } catch (Exception e) {
+            System.out.println("Error al crear opción global");
         }
-        jbPaises.setModel(modelo); 
     }
     
     private void actualizarTablaCiudades() {
         tablaCiudadesModel.setRowCount(0);
         Pais paisSeleccionado = (Pais) jbPaises.getSelectedItem();
+        
         if (paisSeleccionado != null) {
-            List<Ciudad> ciudades = ciudadDAO.obtenerPorPais(paisSeleccionado.getIdPais());
+            try {
+                List<Ciudad> ciudades;
+                if (paisSeleccionado.getIdPais() == -1) {
+                    ciudades = ciudadDAO.obtenerTodas(); 
+                } else {
+                    ciudades = ciudadDAO.obtenerPorPais(paisSeleccionado.getIdPais());
+                }
 
-            for (Ciudad c : ciudades) {
-                Object[] fila = {
-                    c.getIdCiudad(),
-                    c.getNombre(),
-                    c.getDistrito(),
-                    c.getPoblacion(),
-                    c.isEsCapital()
-                };
-                tablaCiudadesModel.addRow(fila);
+                for (Ciudad c : ciudades) {
+                    Object[] fila = {
+                        c.getIdCiudad(),
+                        c.getNombre(),
+                        c.getDistrito(),
+                        c.getPoblacion(),
+                        c.isEsCapital()
+                    };
+                    tablaCiudadesModel.addRow(fila);
+                }
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error al cargar ciudades: " + e.getMessage());
             }
         }
     }
@@ -346,6 +375,8 @@ public class VistaCiudad extends javax.swing.JFrame {
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "La población debe ser un numero valido", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            System.getLogger(VistaCiudad.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }//GEN-LAST:event_BtnnAgregarActionPerformed
 
@@ -380,6 +411,8 @@ public class VistaCiudad extends javax.swing.JFrame {
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "La poblacion debe ser un número valido", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            System.getLogger(VistaCiudad.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }//GEN-LAST:event_BtnnEditarActionPerformed
 

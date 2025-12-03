@@ -50,6 +50,7 @@ public class VistaMenu extends javax.swing.JFrame {
         bttnPais = new javax.swing.JButton();
         bttnCiudad = new javax.swing.JButton();
         bttnIdioma = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -102,10 +103,18 @@ public class VistaMenu extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Reportes");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         jLayeredPane1.setLayer(lblConsultaDeDatos, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(bttnPais, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(bttnCiudad, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(bttnIdioma, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
@@ -118,6 +127,8 @@ public class VistaMenu extends javax.swing.JFrame {
                     .addComponent(bttnPais, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bttnCiudad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bttnIdioma, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jLayeredPane1Layout.setVerticalGroup(
@@ -125,7 +136,9 @@ public class VistaMenu extends javax.swing.JFrame {
             .addGroup(jLayeredPane1Layout.createSequentialGroup()
                 .addComponent(lblConsultaDeDatos)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bttnPais)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bttnPais)
+                    .addComponent(jButton1))
                 .addGap(12, 12, 12)
                 .addComponent(bttnCiudad)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -195,6 +208,11 @@ public class VistaMenu extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_bttnIdiomaActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        VistaReportes reportes = new VistaReportes();
+        reportes.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -224,6 +242,7 @@ public class VistaMenu extends javax.swing.JFrame {
     private javax.swing.JButton bttnControlDeUsuario;
     private javax.swing.JButton bttnIdioma;
     private javax.swing.JButton bttnPais;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLabel lblConsultaDeDatos;
     private javax.swing.JLabel lblTitulo;
