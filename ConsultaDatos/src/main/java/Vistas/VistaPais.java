@@ -33,7 +33,7 @@ public class VistaPais extends javax.swing.JFrame {
         tabla = (DefaultTableModel) jTable1.getModel();
         tabla.setRowCount(0);
         setLocationRelativeTo(null);
-        
+        cargarContinentes();
         try {
             this.paisDAO = new PaisDAO();
         } catch (Exception e) {
@@ -53,7 +53,11 @@ public class VistaPais extends javax.swing.JFrame {
             logger.severe("Error cargando datos: " + e.getMessage());
         }
     }
-
+    
+    private void cargarContinentes() {
+        String[] continentes = {"America", "Europa", "Asia", "Africa", "Oceania", "Antartida"};
+        cbContiente.setModel(new javax.swing.DefaultComboBoxModel<>(continentes));
+    }
     private void actualizarTabla() {
         if (paises == null) return;
         
@@ -80,15 +84,12 @@ public class VistaPais extends javax.swing.JFrame {
     private void limpiarCampos() {
         txtCodigo.setText("");
         txtNombre.setText("");
-        txtContinente.setText("");
+        cbContiente.setSelectedIndex(0);
         txtPoblacion.setText("");
     }
     
     private boolean validarCamposRequeridos() {
-        return !txtCodigo.getText().trim().isEmpty() &&
-               !txtNombre.getText().trim().isEmpty() &&
-               !txtContinente.getText().trim().isEmpty() &&
-               !txtPoblacion.getText().trim().isEmpty();
+        return !txtCodigo.getText().trim().isEmpty() && !txtNombre.getText().trim().isEmpty() && !txtPoblacion.getText().trim().isEmpty();
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -106,8 +107,8 @@ public class VistaPais extends javax.swing.JFrame {
         lblPoblacion = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
         txtNombre = new javax.swing.JTextField();
-        txtContinente = new javax.swing.JTextField();
         txtPoblacion = new javax.swing.JTextField();
+        cbContiente = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         bttnComparar = new javax.swing.JButton();
         bttnAgregar = new javax.swing.JButton();
@@ -203,12 +204,6 @@ public class VistaPais extends javax.swing.JFrame {
             }
         });
 
-        txtContinente.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtContinenteKeyTyped(evt);
-            }
-        });
-
         txtPoblacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPoblacionActionPerformed(evt);
@@ -220,6 +215,13 @@ public class VistaPais extends javax.swing.JFrame {
             }
         });
 
+        cbContiente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbContiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbContienteActionPerformed(evt);
+            }
+        });
+
         jLayeredPane2.setLayer(lblTitulo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(lblCodigo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(lblNombre, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -227,8 +229,8 @@ public class VistaPais extends javax.swing.JFrame {
         jLayeredPane2.setLayer(lblPoblacion, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(txtCodigo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(txtNombre, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane2.setLayer(txtContinente, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(txtPoblacion, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane2.setLayer(cbContiente, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jLayeredPane2Layout = new javax.swing.GroupLayout(jLayeredPane2);
         jLayeredPane2.setLayout(jLayeredPane2Layout);
@@ -247,9 +249,9 @@ public class VistaPais extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtNombre)
-                    .addComponent(txtContinente)
                     .addComponent(txtPoblacion)
-                    .addComponent(txtCodigo)))
+                    .addComponent(txtCodigo)
+                    .addComponent(cbContiente, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jLayeredPane2Layout.setVerticalGroup(
             jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,7 +269,7 @@ public class VistaPais extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblContinente)
-                    .addComponent(txtContinente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbContiente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPoblacion)
@@ -416,48 +418,45 @@ public class VistaPais extends javax.swing.JFrame {
         
         String codigo = txtCodigo.getText().trim().toUpperCase();
         String nombre = txtNombre.getText().trim();
-        String continente = txtContinente.getText().trim();
+        String continente = cbContiente.getSelectedItem().toString(); 
         String poblacionStr = txtPoblacion.getText().trim();
         
         try {
             Pais paisExistente = paisDAO.obtenerPaisPorCodigo(codigo);
             if (paisExistente != null) {
-                JOptionPane.showMessageDialog(this, "El código del país ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "El codigo del pais ya existe", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
             int poblacion = Integer.parseInt(poblacionStr);
             
             Pais nuevoPais = new Pais(
                 nombre, 
                 continente, 
-                "N/A",
+                "N/A",  
                 0.0f, 
                 0, 
                 poblacion, 
                 0.0f, 
                 0.0f, 
-                "N/A",
-                "N/A",
+                "N/A", 
+                "N/A",  
                 codigo
-                );
-            
+            );
             
             int idGenerado = paisDAO.insertarPais(nuevoPais);
             
             if (idGenerado > 0) {
-                JOptionPane.showMessageDialog(this, "País " + nombre + " agregado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Pais " + nombre + " agregado con exito", "Exito", JOptionPane.INFORMATION_MESSAGE);
                 cargarDatosDesdeBD();
                 limpiarCampos();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al agregar el país", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al agregar el pais", "Error", JOptionPane.ERROR_MESSAGE);
             }
             
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "La población debe ser un número válido", "Error de dato", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "La poblacion debe ser un numero válido", "Error de dato", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error de base de datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            logger.severe("Error agregando país: " + e.getMessage());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -471,7 +470,7 @@ public class VistaPais extends javax.swing.JFrame {
     private void bttnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bttnModificarActionPerformed
         int fila = jTable1.getSelectedRow();
         if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un país para modificar", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un pais para modificar", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -480,42 +479,41 @@ public class VistaPais extends javax.swing.JFrame {
             return;
         }
         
-        Pais paisOriginal = obtenerPaisPorFila(fila);
+        int indiceModelo = jTable1.convertRowIndexToModel(fila);
+        Pais paisOriginal = paises.get(indiceModelo);
+        
         if (paisOriginal == null) {
-            JOptionPane.showMessageDialog(this, "País no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Pais no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         String codigo = txtCodigo.getText().trim().toUpperCase();
         String nombre = txtNombre.getText().trim();
-        String continente = txtContinente.getText().trim();
+        String continente = cbContiente.getSelectedItem().toString();
         String poblacionStr = txtPoblacion.getText().trim();
         
         try {
             int poblacion = Integer.parseInt(poblacionStr);
             
-            // Actualizar el país existente
             paisOriginal.setCodPais(codigo);
             paisOriginal.setNombre(nombre);
             paisOriginal.setContinente(continente);
             paisOriginal.setPoblacion(poblacion);
             
-            // Actualizar en la base de datos
             boolean exito = paisDAO.actualizarPais(paisOriginal);
             
             if (exito) {
-                JOptionPane.showMessageDialog(this, "País modificado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                cargarDatosDesdeBD(); // Recargar datos desde BD
+                JOptionPane.showMessageDialog(this, "Pais modificado con exito", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                cargarDatosDesdeBD();
                 limpiarCampos();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al modificar el país", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al modificar el pais", "Error", JOptionPane.ERROR_MESSAGE);
             }
             
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "La población debe ser un número válido", "Error de dato", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "La poblacion debe ser un numero valido", "Error de dato", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error de base de datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            logger.severe("Error modificando país: " + e.getMessage());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -531,12 +529,6 @@ public class VistaPais extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtNombreKeyTyped
 
-    private void txtContinenteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContinenteKeyTyped
-        if(txtContinente.getText().length() > 50 || !Character.isLetter(evt.getKeyChar())){
-            evt.consume();
-        }
-    }//GEN-LAST:event_txtContinenteKeyTyped
-
     private void txtPoblacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPoblacionKeyTyped
        if(txtPoblacion.getText().length() > 15 || !Character.isDigit(evt.getKeyChar())){
             evt.consume();
@@ -546,15 +538,21 @@ public class VistaPais extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         int fila = jTable1.getSelectedRow();
         if (fila != -1) {
-            Pais paisSeleccionado = obtenerPaisPorFila(fila);
+            int indiceModelo = jTable1.convertRowIndexToModel(fila);
+            Pais paisSeleccionado = paises.get(indiceModelo);
+            
             if (paisSeleccionado != null) {
                 txtCodigo.setText(paisSeleccionado.getCodPais());
                 txtNombre.setText(paisSeleccionado.getNombre());
-                txtContinente.setText(paisSeleccionado.getContinente());
+                cbContiente.setSelectedItem(paisSeleccionado.getContinente());
                 txtPoblacion.setText(String.valueOf(paisSeleccionado.getPoblacion()));
             }
         }
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void cbContienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbContienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbContienteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -586,6 +584,7 @@ public class VistaPais extends javax.swing.JFrame {
     private javax.swing.JButton bttnAtras;
     private javax.swing.JButton bttnComparar;
     private javax.swing.JButton bttnModificar;
+    private javax.swing.JComboBox<String> cbContiente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;
@@ -600,7 +599,6 @@ public class VistaPais extends javax.swing.JFrame {
     private javax.swing.JLabel lblPoblacion;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextField txtCodigo;
-    private javax.swing.JTextField txtContinente;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPoblacion;
     // End of variables declaration//GEN-END:variables
